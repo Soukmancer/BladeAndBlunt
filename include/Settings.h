@@ -6,9 +6,7 @@ public:
 	static Settings* GetSingleton();
 
 	void LoadSettings();
-	void LoadForms();
-	void AdjustWeaponStaggerVals();
-	void ReplacePowerAttackKeywords();
+
 	void SetGlobalsAndGameSettings();
 
 	RE::SpellItem* IsAttackingSpell;
@@ -73,41 +71,8 @@ public:
 
 	int maxFrameCheck = 6;
 
-	static RE::FormID ParseFormID(const std::string& str);
+
 
 	std::string FileName;
 
-	static RE::TESFile* LookupLoadedModByName(std::string_view a_modName)
-    {
-        for (auto& file : RE::TESDataHandler::GetSingleton()->compiledFileCollection.files) {
-            if (a_modName.size() == strlen(file->fileName) && _strnicmp(file->fileName, a_modName.data(), a_modName.size()) == 0) {
-                return file;
-            }
-        }
-        return nullptr;
-    }
-
-    static const RE::TESFile* LookupLoadedLightModByName(std::string_view a_modName)
-    {
-        for (auto& smallFile : RE::TESDataHandler::GetSingleton()->compiledFileCollection.smallFiles) {
-            if (a_modName.size() == strlen(smallFile->fileName) && _strnicmp(smallFile->fileName, a_modName.data(), a_modName.size()) == 0) {
-                return smallFile;
-            }
-        }
-        return nullptr;
-    }
-
-    template<typename T>
-    T* LoadFormPointerFromIni(std::string formId, std::string filename)
-    {
-        if (!formId.empty()) {
-            auto objectFormId = ParseFormID(formId);
-            auto form         = RE::TESDataHandler::GetSingleton()->LookupForm(objectFormId, filename)->As<T>();
-            return form;
-        }
-        else {
-            return nullptr;
-        }
-        
-    }
 };
