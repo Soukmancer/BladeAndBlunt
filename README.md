@@ -1,31 +1,7 @@
 This is a CommonLib implementation of a .NETScriptFramework plugin originally written by KernalsEgg. 
 Much of the credit for the RE work goes to KernalsEgg.
 
-This was made for Blade and Blunt - A Combat Overhaul by SimonMagus616.
-
-## What does it do?  
-**Adds specified spells in ini for the following scenarios:**  
-`IsAttacking`  
-`IsBlocking`  
-`IsSneaking`
-`IsCasting`
-`Spell when drawing bow`  
-`Spell when firing xbow`  
-`Spell when reloading xbow`  
-
-**Includes engine fixes/changes for:**  
-`Movement speed for player scale`  
-`Block cap will use fBlockMax instead of fPlayerMaxResistance`  
-`Spell absorption cap will no longer exceed fPlayerMaxResistance`    
-
-**Other features**  
 `Override for new armor rating scaling formula`    
-`Override Block and Bash stamina cost with corresponding perks set in ini`  
-`Injury system will apply injury stages based on damage taken`  
-`Support for injury health AV penalty`  
-`Handles parry and block stagger spells`  
-`Scans load order for all weapons and zeroes stagger values to let Simonrim handle stagger`
-`Replaces power attack keyword to differentiate from dual wield power attacks and power attacks while dual wielding`
 
 ## Requirements
 * [CMake](https://cmake.org/)
