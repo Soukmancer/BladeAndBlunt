@@ -1,7 +1,6 @@
 #include "Hooks.h"
+#include "events.h"
 #include "Cache.h"
-#include "Events.h"
-#include "Serialization.h"
 
 void InitLogger()
 {
@@ -27,7 +26,6 @@ void InitLogger()
 
 void InitListener(SKSE::MessagingInterface::Message* a_msg)
 {
-	auto settings = Settings::GetSingleton();
 	switch (a_msg->type)
 	{
 	case SKSE::MessagingInterface::kNewGame:
@@ -35,20 +33,9 @@ void InitListener(SKSE::MessagingInterface::Message* a_msg)
 		Settings::GetSingleton()->SetGlobalsAndGameSettings();
 		break;
 	case SKSE::MessagingInterface::kPostLoad:
-		if (!Hooks::InstallBashMultHook()) {
-			logger::error("Bash hook installation failed.");
-		} else {
-			logger::info("Bash hook installed");
-		}
-
 		break;
 	case SKSE::MessagingInterface::kDataLoaded:
-		if (settings) {
-			settings->LoadForms();
-			settings->AdjustWeaponStaggerVals();
-			settings->ReplacePowerAttackKeywords();
-		}
-
+		
         AnimationGraphEventHandler::Register();
         OnHitEventHandler::Register();
 
@@ -90,13 +77,6 @@ SKSEPluginLoad(const SKSE::LoadInterface* skse)
 	if (!messaging->RegisterListener(InitListener))
 	{
 		return false;
-	}
-
-	if (auto serialization = SKSE::GetSerializationInterface()) {
-		serialization->SetUniqueID(Serialization::ID);
-		serialization->SetSaveCallback(&Serialization::SaveCallback);
-		serialization->SetLoadCallback(&Serialization::LoadCallback);
-		serialization->SetRevertCallback(&Serialization::RevertCallback);
 	}
 
 	logger::info("Blade and Blunt loaded.");
