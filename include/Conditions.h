@@ -33,20 +33,7 @@ namespace Conditions
 	}
 	inline static REL::Relocation<decltype(HasSpell)> _HasSpell;
 
-
-	static bool IsMoving(RE::PlayerCharacter* player)
-	{
-		auto playerState = player->AsActorState();
-		return (static_cast<bool>(playerState->actorState1.movingForward) || static_cast<bool>(playerState->actorState1.movingBack) || static_cast<bool>(playerState->actorState1.movingLeft) || static_cast<bool>(playerState->actorState1.movingRight));
-	}
-
-	static RE::TESObjectWEAP* GetUnarmedWeapon()
-	{
-		auto** singleton{ reinterpret_cast<RE::TESObjectWEAP**>(Cache::getUnarmedWeaponAddress) };
-		return *singleton;
-	}
-
-	static inline bool PlayerHasActiveMagicEffect(RE::EffectSetting* a_effect)
+    	static inline bool PlayerHasActiveMagicEffect(RE::EffectSetting* a_effect)
 	{
 		auto player = RE::PlayerCharacter::GetSingleton();
 
@@ -62,21 +49,7 @@ namespace Conditions
 		}
 		return false;
 	}
-
-	static bool IsSurvivalEnabled() {
-		auto settings = Settings::GetSingleton();
-		if (!settings || !settings->Survival_ModeEnabled) {
-			return false;
-		} 
-
-		if (settings->Survival_ModeEnabled->value == 1.0) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-    static inline bool IsPowerAttacking(RE::Actor* actor) {
+        static inline bool IsPowerAttacking(RE::Actor* actor) {
         if (auto high = actor->GetHighProcess()) {
             if (const auto attackData = high->attackData) {
                 auto flags = attackData->data.flags;

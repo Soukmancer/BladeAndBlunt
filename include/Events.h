@@ -1,6 +1,5 @@
 #pragma once
 #include <Conditions.h>
-#include <InjuryApplicationManager.h>
 #include <RecentHitEventData.h>
 
 class OnHitEventHandler : public RE::BSTEventSink<RE::TESHitEvent>
@@ -36,9 +35,7 @@ public:
 			bool skipEvent = ShouldSkipHitEvent(causeActor, targetActor, applicationRuntime);	//Filters out dupe events
 
 			if (!skipEvent) {			
-				auto attackingWeapon = RE::TESForm::LookupByID<RE::TESObjectWEAP>(a_event->source);
-				auto spellItem = RE::TESForm::LookupByID<RE::SpellItem>(a_event->source);
-
+				
 				//Something is effed with power attacks. The source isnt coming through and casting as a weapon and the hit flags are empty
 				//We can work around it like this
 				bool powerAttackMelee = false;
@@ -61,37 +58,8 @@ public:
 					}
 				}
 
-				bool isBlocking = a_event->flags.any(RE::TESHitEvent::Flag::kHitBlocked) || targetActor->IsBlocking();
-                bool isWarding  = targetActor->HasKeywordString("MagicWard"sv);
-
-				if ((attackingWeapon || powerAttackMelee) || (spellItem && spellItem->hostileCount > 0)) {
-
-                    float chanceMult = isBlocking || isWarding ? 0.50f : 1.0f;
-
-                    //Incoming spells while warding do not injure
-                    if (!isWarding || !(spellItem && spellItem->hostileCount > 0)) {
-					    auto injuryManager = InjuryApplicationManager::GetSingleton();
-                        injuryManager->ProcessHitInjuryApplication(causeActor, targetActor, applicationRuntime, chanceMult);
-                    }
-				}
-
-				auto leftHand = targetActor->GetEquippedObject(true);
-
-				bool blockedMeleeHit = false;
-				if (!a_event->projectile && 
-					((attackingWeapon && attackingWeapon->IsMelee()) || powerAttackMelee) &&
-					isBlocking) {
-					blockedMeleeHit = true;
-				}
-				
-				//Shield Stagger
-				if (leftHand && leftHand->IsArmor() && blockedMeleeHit){
-					ProcessHitEventForBlockStagger(targetActor, causeActor);
-				} else if (blockedMeleeHit) {
-					//Parry
-					ProcessHitEventForParry(targetActor,causeActor);
-				}
-				recentGeneralHits.insert(std::make_pair(applicationRuntime, RecentHitEventData(targetActor, causeActor, applicationRuntime)));
+								//Shield Stagger
+			recentGeneralHits.insert(std::make_pair(applicationRuntime, RecentHitEventData(targetActor, causeActor, applicationRuntime)));
 			}
 		}
 		return RE::BSEventNotifyControl::kContinue;
@@ -235,15 +203,6 @@ public:
 class WeaponFireHandler
 {
 public:
-	static void InstallArrowReleaseHook() {
-		logger::info("Writing arrow release handler hook");
-
-		auto& trampoline = SKSE::GetTrampoline();
-		_Weapon_Fire = trampoline.write_call<5>(Hooks::arrow_release_handler.address(), WeaponFire);
-		
-		logger::info("Release arrow hooked");
-	}
-
 	static void WeaponFire(RE::TESObjectWEAP* a_weapon, RE::TESObjectREFR* a_source, RE::TESAmmo* a_ammo, RE::EnchantmentItem* a_ammoEnchantment, RE::AlchemyItem* a_poison)
 	{
 		_Weapon_Fire(a_weapon, a_source, a_ammo, a_ammoEnchantment, a_poison);

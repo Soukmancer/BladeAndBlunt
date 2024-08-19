@@ -2,7 +2,6 @@
 
 #include "Conditions.h"
 #include "Hooks.h"
-#include "InjuryPenaltyManager.h"
 
 static float lastTime;
 
@@ -14,9 +13,6 @@ public:
 	inline static int frameCount;
 	inline static bool Install()
 	{
-		auto& trampoline = SKSE::GetTrampoline();
-		_OnFrameFunction = trampoline.write_call<5>(Hooks::OnFrame_Update_Hook.address(), OnFrameUpdate);
-
 		UpdateManager::frameCount = 0;
 		logger::info("Installed hook for frame update");
 		return true;
@@ -129,23 +125,6 @@ private:
 				    }
 				    break;
 			    case 5:
-				    if (player->IsSneaking() && IsMoving(player)) {
-					    if (!HasSpell(player, settings->IsSneakingSpell) && settings->enableSneakStaminaCost)
-						    player->AddSpell(settings->IsSneakingSpell);
-				    } else if (HasSpell(player, settings->IsSneakingSpell)) {
-					    player->RemoveSpell(settings->IsSneakingSpell);
-				    }
-
-                    if (player->AsActorState()->IsSwimming() && IsMoving(player)) {
-                        if (!HasSpell(player, settings->IsSwimmingSpell))
-                            player->AddSpell(settings->IsSwimmingSpell);
-                    }
-                    else if (HasSpell(player, settings->IsSwimmingSpell)) {
-                        player->RemoveSpell(settings->IsSwimmingSpell);
-                    }
-
-				    break;
-			    case 6:
 				    {
                         //Cache mount and remove spell if not mounted
 					    auto* state = player->AsActorState();
@@ -178,20 +157,7 @@ private:
             }
 		}
 
-        if (!Cache::GetUISingleton()->GameIsPaused()) {
-
-		    if (Cache::g_deltaTime > 0) {
-			    lastTime += Cache::g_deltaTime;
-			    if (lastTime >= settings->injuryUpdateFrequency) {
-				    auto inj = InjuryPenaltyHandler::GetSingleton();
-				    inj->CheckInjuryAvPenalty();
-				    lastTime = 0;
-			    }
-		    }
-        }
-
- 
-		UpdateManager::frameCount++;
+       	UpdateManager::frameCount++;
 		return _OnFrameFunction(a1);
 	}
 

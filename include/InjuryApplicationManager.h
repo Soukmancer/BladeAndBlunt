@@ -15,21 +15,7 @@ public:
 		return &appHandler;
 	}
 
-	void ProcessHitInjuryApplication(RE::Actor* cause, RE::Actor* target, uint32_t runtime, float chanceMult)
-	{
-		auto settings = Settings::GetSingleton();
-		if (((settings->enableInjuries && !settings->SMOnlyEnableInjuries) ||
-			(settings->enableInjuries && settings->SMOnlyEnableInjuries && Conditions::IsSurvivalEnabled()))) {
-
-			uint32_t roundedRunTime = RoundRunTime(runtime);
-			if (!ShouldSkipInjuryRoll(cause, target, roundedRunTime)) {
-                RollForInjuryEvent(chanceMult);
-				recentInjuryRolls.insert(std::make_pair(roundedRunTime, RecentHitEventData(target, cause, roundedRunTime)));
-			}
-		}
-	}
-
-private:
+	private:
 
 	//this is separate from the "ShouldSkipHitEvent" because this is meant to track injury roll hits within the last second.
 	//"ShouldSkipHitEvent" tracks duplicate events that happen at the same time (ie. hits from enchanted weapons trigger multiple hits)
