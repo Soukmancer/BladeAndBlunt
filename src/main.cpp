@@ -1,6 +1,6 @@
 #include "Hooks.h"
-#include "events.h"
 #include "Cache.h"
+#include "Settings.h"
 
 void InitLogger()
 {
@@ -28,18 +28,10 @@ void InitListener(SKSE::MessagingInterface::Message* a_msg)
 {
 	switch (a_msg->type)
 	{
-	case SKSE::MessagingInterface::kNewGame:
 	case SKSE::MessagingInterface::kPostLoadGame:
 		Settings::GetSingleton()->SetGlobalsAndGameSettings();
 		break;
-	case SKSE::MessagingInterface::kPostLoad:
-		break;
-	case SKSE::MessagingInterface::kDataLoaded:
-		
-        AnimationGraphEventHandler::Register();
-        OnHitEventHandler::Register();
 
-		break;
 	}
 }
 

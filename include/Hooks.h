@@ -7,5 +7,4 @@ namespace Hooks
 	static REL::Relocation<std::uintptr_t> armorRating2(REL::RelocationID(37605, 38558));
 
 	bool InstallHooks();
-	bool InstallBashMultHook();
 }
